@@ -5,17 +5,22 @@ public class Enemy : MovingObject {
 
 	public int playerDamage;
 
-    public int hp = 5;
+    public int hp = 50;
 
     public bool inRange = false;
 
 	private Animator animator;
 	private Transform target;
 	private bool skipMove;
+    private float coolDown;
+    private float lastAttackTime;
 	public AudioClip enemyAttack1;
 	public AudioClip enemyAttack2;
 	
 	protected override void Start () {
+        coolDown = 10.0f;
+        hp = 50;
+        lastAttackTime = Time.time;
 		GameManager.instance.AddEnemyToList (this);
 		animator = GetComponent<Animator> ();
 		target = GameObject.FindGameObjectWithTag ("Player").transform;
@@ -33,6 +38,22 @@ public class Enemy : MovingObject {
 
 		skipMove = true;
 	}
+
+
+    public void EnemyAttacked(float y,int minusHp)
+    {
+        if (Mathf.Abs(transform.position.y - y) < float.Epsilon)
+            hp -= minusHp;
+        // TODO: Memory leak!
+        lock(this)
+        {
+            if (hp < 0)
+            {
+                this.gameObject.SetActive(false);
+                Destroy(this.gameObject);
+            }
+        }
+    }
 
 	public void MoveEnemy()
 	{
@@ -57,7 +78,12 @@ public class Enemy : MovingObject {
 	{
 		Player hitPlayer = component as Player;
 
-		hitPlayer.LoseFood (playerDamage);
+        if (Time.time - lastAttackTime > coolDown)
+        {
+            hitPlayer.LoseFood(playerDamage);
+            lastAttackTime = Time.time;
+        }
+        else return;
 
 		animator.SetTrigger ("enemyAttack");
 

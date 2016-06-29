@@ -20,9 +20,14 @@ public class Player : MovingObject {
 	private Animator animator;
 	private int hp;
 	private Vector2 touchOrigin = -Vector2.one;
-
+    private float coolDown;
+    private float lastAttackTime;
 	// Use this for initialization
 	protected override void Start () {
+
+        coolDown = 1.0f;
+        lastAttackTime = Time.time;
+
 		animator = GetComponent<Animator> ();
 
 		hp = GameManager.instance.playerFoodPoints;
@@ -39,8 +44,8 @@ public class Player : MovingObject {
 
 	// Update is called once per frame
 	void Update () {
-		if (!GameManager.instance.playersTurn)
-			return;
+		//if (!GameManager.instance.playersTurn)
+			//return;
 
 		int horizontal = 0;
 		int vertical = 0;
@@ -87,6 +92,12 @@ public class Player : MovingObject {
 
 #endif
 
+        if (Time.time - lastAttackTime > coolDown)
+        {
+            GameManager.instance.AttackEnemies(transform.position.y, 10);
+            lastAttackTime = Time.time;
+        }
+
 		if (horizontal != 0 || vertical != 0)
 			AttemptMove<Wall> (horizontal, vertical);
 	}
@@ -94,7 +105,7 @@ public class Player : MovingObject {
 	protected override void AttemptMove <T> (int xDir, int yDir)
 	{
 		//hp--;
-		foodText.text = "Food: " + hp;
+		foodText.text = "HP: " + hp;
 
 		base.AttemptMove <T> (xDir, yDir);
 
@@ -115,12 +126,12 @@ public class Player : MovingObject {
 			enabled = false;
 		} else if (other.tag == "Food") {
 			hp += pointsPerFood;
-			foodText.text = "+" + pointsPerFood + " Food: " + hp;
+			foodText.text = "+" + pointsPerFood + " HP: " + hp;
 			SoundManager.instance.RandomizeSfx(eatSound1, eatSound2);
 			other.gameObject.SetActive (false);
 		} else if (other.tag == "Soda") {
 			hp += pointsPerSoda;
-			foodText.text = "+" + pointsPerSoda + " Food: " + hp;
+			foodText.text = "+" + pointsPerSoda + " HP: " + hp;
 			SoundManager.instance.RandomizeSfx(drinkSound1, drinkSound2);
 			other.gameObject.SetActive (false);
 		}
@@ -142,7 +153,7 @@ public class Player : MovingObject {
 	{
 		animator.SetTrigger ("playerHit");
 		hp -= loss;
-		foodText.text = "-" + loss + " Food: " + hp;
+		foodText.text = "-" + loss + " HP: " + hp;
 		CheckIfGameOver ();
 	}
 

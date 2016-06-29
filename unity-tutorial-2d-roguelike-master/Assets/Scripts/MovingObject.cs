@@ -3,7 +3,7 @@ using System.Collections;
 
 public abstract class MovingObject : MonoBehaviour
 {
-	public float moveTime = 0.1f;
+	public float moveTime = 0.5f;
 	public LayerMask blockingLayer;
 
 	private BoxCollider2D boxCollider;
@@ -12,7 +12,8 @@ public abstract class MovingObject : MonoBehaviour
 
 	// Use this for initialization
 	protected virtual void Start () {
-		boxCollider = GetComponent<BoxCollider2D> ();
+        moveTime = 3.0f;
+        boxCollider = GetComponent<BoxCollider2D> ();
 		rb2D = GetComponent<Rigidbody2D> ();
 		inverseMoveTime = 1f / moveTime;
 	}
@@ -20,7 +21,7 @@ public abstract class MovingObject : MonoBehaviour
 	protected bool Move (int xDir, int yDir, out RaycastHit2D hit)
 	{
 		Vector2 start = transform.position;
-		Vector2 end = start + new Vector2 (xDir, yDir);
+		Vector2 end = start + new Vector2 (-0.1f,0.0f);
 
 		boxCollider.enabled = false;
 		hit = Physics2D.Linecast (start, end, blockingLayer);
