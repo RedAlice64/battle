@@ -10,6 +10,8 @@ public abstract class MovingObject : MonoBehaviour
 	private Rigidbody2D rb2D;
 	private float inverseMoveTime;
 
+    private float leftBorder=0.0f;
+
 	// Use this for initialization
 	protected virtual void Start () {
         moveTime = 3.0f;
@@ -21,13 +23,14 @@ public abstract class MovingObject : MonoBehaviour
 	protected bool Move (int xDir, int yDir, out RaycastHit2D hit)
 	{
 		Vector2 start = transform.position;
+        
 		Vector2 end = start + new Vector2 (-0.1f,0.0f);
 
 		boxCollider.enabled = false;
 		hit = Physics2D.Linecast (start, end, blockingLayer);
 		boxCollider.enabled = true;
-
-		if (hit.transform == null) {
+        if (start.x < leftBorder) return true;
+        if (hit.transform == null) {
 			StartCoroutine (SmoothMovement (end));
 			return true;
 		}

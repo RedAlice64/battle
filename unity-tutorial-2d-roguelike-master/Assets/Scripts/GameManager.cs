@@ -28,6 +28,8 @@ public class GameManager : MonoBehaviour {
     private float lastSpawnTime;
     private float spawnCoolDown;
 
+    
+
     // Use this for initialization
     void Awake () {
 		if (instance == null)

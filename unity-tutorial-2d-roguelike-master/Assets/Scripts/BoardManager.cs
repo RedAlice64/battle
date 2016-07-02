@@ -33,7 +33,12 @@ public class BoardManager : MonoBehaviour
 	private Transform boardHolder;
 	private List <Vector3> gridPositions = new List <Vector3> ();
 
-	void InitialiseList()
+    private float playerX = 0.0f, playerY = 1.0f;
+
+    private float rowWidth = 1.0f;
+    private float columnWidth = 1.0f;
+
+    void InitialiseList()
 	{
         columns = 8;
         rows = 3;
@@ -41,7 +46,7 @@ public class BoardManager : MonoBehaviour
 
 		for (int x = 4; x < columns - 1; x++) {
 			for (int y = 0; y < rows ; y++) {
-				gridPositions.Add (new Vector3 (x, y, 0f));
+				gridPositions.Add (new Vector3 (playerX+x*columnWidth, playerY+(y-1)*rowWidth, 0f));
 			}
 		}
 	}
@@ -51,7 +56,7 @@ public class BoardManager : MonoBehaviour
         columns = 8;
         rows = 3;
         boardHolder = new GameObject ("Board").transform;
-
+        /*
 		for (int x = -1; x < columns + 1; x++) {
 			for (int y = -1; y < rows + 1; y++) {
 				GameObject toInstantiate = floorTiles [Random.Range (0, floorTiles.Length)];
@@ -62,7 +67,7 @@ public class BoardManager : MonoBehaviour
 
 				instance.transform.SetParent (boardHolder);
 			}
-		}
+		}*/
 	}
 
 	Vector3 RandomPosition()
